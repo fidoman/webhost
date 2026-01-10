@@ -47,6 +47,7 @@ www_group=site_config.get("www_group","www")
 userprefix=site_config.get("userprefix","www-")
 logs=site_config.get("logs","/var/log/www-")
 phpsess=site_config.get("phpsess","/var/php/sessions-")
+le_prefix=site_config.get("le_prefix","")
 email=site_config["email"]
 
 for srv_folder in srv_folders:
@@ -112,4 +113,4 @@ for srv_folder in srv_folders:
         print("write", os.path.join(apache_conf, "%s.%s.conf"%(serv, site_name)))
         with open(os.path.join(apache_conf, "%s.%s.conf"%(serv, site_name)), "w") as of:
           print("mako site %s.%s names %s"%(repr(serv), repr(site_name), repr(names)))
-          of.write(apache_tpl.render(serv_path=f, logs=logs, serv=serv, site=site_name, names=names, custom=custom, with_fpm=with_fpm, with_ssl=with_ssl, ip=bind_ip, email=email))
+          of.write(apache_tpl.render(serv_path=f, logs=logs, serv=serv, site=site_name, names=names, custom=custom, with_fpm=with_fpm, with_ssl=with_ssl, ip=bind_ip, email=email, le_prefix=le_prefix))

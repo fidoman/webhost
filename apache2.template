@@ -30,8 +30,8 @@ ${custom}
 %if with_ssl:
     SSLEngine on
     SSLCACertificatePath /etc/ssl/certs/
-    SSLCertificateFile    /usr/local/etc/letsencrypt/live/${names[0]}/fullchain.pem
-    SSLCertificateKeyFile /usr/local/etc/letsencrypt/live/${names[0]}/privkey.pem
+    SSLCertificateFile    ${le_prefix}/etc/letsencrypt/live/${names[0]}/fullchain.pem
+    SSLCertificateKeyFile ${le_prefix}/etc/letsencrypt/live/${names[0]}/privkey.pem
 %endif
 
 %if with_fpm:
