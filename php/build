@@ -1,0 +1,14 @@
+# wget https://github.com/php/php-src/archive/refs/tags/php-7.4.33.tar.gz
+
+pkg install -y zlib-ng bzip2 libgd gettext gmp pkgconf enchant iconv libiconv libxslt libzip libXpm freetype2 bison re2c sqlite3 oniguruma mysql80-client openssl111-1.1.1w_2
+
+cd php-7.4.33
+setenv CFLAGS "-std=c17"
+setenv CXXFLAGS "-std=c++17"
+./configure --prefix=/opt/php74 --enable-fpm --with-openssl --with-zlib --enable-bcmath --with-bz2 --enable-calendar --with-curl --enable-dba=shared --with-enchant --enable-exif \
+--with-ffi --enable-ftp \
+--enable-gd --with-webp --with-jpeg --with-xpm --with-freetype --enable-gd-jis-conv \
+--with-gettext --with-gmp --with-mhash --enable-intl --enable-mbstring \
+--with-mysqli --with-pdo-mysql=/usr/local --with-zlib-dir=/usr/local --enable-shmop --with-xsl --with-zip --enable-mysqlnd --with-pear \
+--enable-sockets && make -j 4
+cd ..
