@@ -1,0 +1,15 @@
+{
+    "": {
+      "srv": ["/srv"],
+      "apache_conf": "/etc/apache2/sites-available",
+      "apache_root": "/var/www/html",
+      "fpm_pools": {
+        "8.2": "/etc/php/8.2/fpm/pool.d"
+      },
+      "www_group": "www-data",
+      "userprefix": "www-",
+      "logs": "/var/log/www-",
+      "phpsess": "/var/php/sessions-",
+      "email": ...
+    }
+}
