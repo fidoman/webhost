@@ -1,7 +1,11 @@
+%if port:
+<VirtualHost ${ip}:${port}>
+%else:
 %if with_ssl:
 <VirtualHost ${ip}:443>
 %else:
 <VirtualHost ${ip}:80>
+%endif
 %endif
 
     ServerAdmin ${email}

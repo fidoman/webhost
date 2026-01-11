@@ -72,6 +72,7 @@ for srv_folder in srv_folders:
         with_fpm = names_conf[site_name].get("fpm", False) # default: without fpm
         with_ssl = names_conf[site_name].get("ssl", True) # default: with SSL
         bind_ip = names_conf[site_name].get("ip", "*")
+        bind_port = names_conf[site_name].get("port")
         with_custom = names_conf[site_name].get("custom", False) # causes fail if file is lost, as it may have security restriction
 
         site_user=userprefix+serv
@@ -113,4 +114,4 @@ for srv_folder in srv_folders:
         print("write", os.path.join(apache_conf, "%s.%s.conf"%(serv, site_name)))
         with open(os.path.join(apache_conf, "%s.%s.conf"%(serv, site_name)), "w") as of:
           print("mako site %s.%s names %s"%(repr(serv), repr(site_name), repr(names)))
-          of.write(apache_tpl.render(serv_path=f, logs=logs, serv=serv, site=site_name, names=names, custom=custom, with_fpm=with_fpm, with_ssl=with_ssl, ip=bind_ip, email=email, le_prefix=le_prefix))
+          of.write(apache_tpl.render(serv_path=f, logs=logs, serv=serv, site=site_name, names=names, custom=custom, with_fpm=with_fpm, with_ssl=with_ssl, ip=bind_ip, port=bind_port, email=email, le_prefix=le_prefix))

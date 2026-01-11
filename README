@@ -1,0 +1,2 @@
+You should yourself configure listening ip/ports in ports.conf as depending on local configuration vhost list may or may not include '*' or some IPs.
+That's not best in convience but guarantees that new placed in /srv server will not break some other service that listens on 80/443 on IP that should not be assigned to apache.
