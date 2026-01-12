@@ -1,9 +1,12 @@
 #!/usr/bin/python3
 
 import os
+import pwd
+import grp
 from mako.template import Template
 import json
 
+osname=os.uname().sysname
 
 myhost=os.popen("hostname -f").read().strip()
 print("Configuring on:", myhost)
@@ -86,10 +89,20 @@ for srv_folder in srv_folders:
           # add www_group to this group
           # use same user for all sites in serv
           site_user=userprefix+serv
-          print("create user %s"%site_user)
-#          os.system("pw useradd %s -m -g %s"%(site_user, www_group))
-          os.system("useradd -m %s"%site_user)
-          os.system("adduser %s %s"%(www_user, site_user))
+          try:
+            pwd.getpwnam(site_user)
+            print("user %s exists"%site_user)
+          except:
+            print("create user %s"%site_user)
+            # create user with own group and add www_user to this group
+            if osname=='Linux':
+              os.system("useradd -m %s"%site_user)
+              os.system("adduser %s %s"%(www_user, site_user))
+            elif osname=='FreeBSD':
+              os.system("pw user add %s -m"%site_user)
+              os.system("pw group mod %s -m %s"%(site_user, www_user))
+            else:
+              print(osname,"create manually",site_user)
 
           poolconf = read_custom(site_name, os.path.join(f, "pool.conf-%s"))
           # create dir for session files
