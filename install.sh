@@ -7,6 +7,9 @@ apt install php-gd
 # dovecot auth
 # apache2-dev pkg-config
 
+#roundcube
+apt install php-zip
+
 # wiki
 apt install php-fpm php-json php-xml php-mbstring php-mysqlnd php-gd php-apcu
 #apt install python3 python3-requests mysql-connector-python3
