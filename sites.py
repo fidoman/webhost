@@ -96,8 +96,10 @@ for srv_folder in srv_folders:
           os.system("chgrp -R %s %s/php"%(www_group, logs))
           os.system("chmod g+w %s/php"%logs)
 
-          print("write", "%s/%s.%s.conf"%(fpm_pools, serv, site_name))
-          with open("%s/%s.%s.conf"%(fpm_pools, serv, site_name), "w") as cf:
+          fpm_config=fpm_pools[with_fpm]
+
+          print("write", "%s/%s.%s.conf"%(fpm_config, serv, site_name))
+          with open("%s/%s.%s.conf"%(fpm_config, serv, site_name), "w") as cf:
             cf.write(fpm_tpl%{"serv": serv, "user": site_user, "group": www_group, "site":site_name, "logs":logs, "phpsess":phpsess}+"\n"+poolconf)
 
         with open(os.path.join(f, "issue-%s.%s"%(serv, site_name)), "w") as of:
