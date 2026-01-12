@@ -8,6 +8,7 @@
         "8.2": "/etc/php/8.2/fpm/pool.d"
       },
       "www_group": "www-data",
+      "www_user": "www-data",
       "userprefix": "www-",
       "logs": "/var/log",
       "phpsess": "/var/php/sessions-",

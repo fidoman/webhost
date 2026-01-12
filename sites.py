@@ -43,7 +43,8 @@ srv_folders=site_config.get("srv", ["/srv"])
 apache_root=site_config.get("apache_root", "/tmp")
 apache_conf=site_config.get("apache_conf", "/tmp")
 fpm_pools=site_config.get("fpm_pools","/tmp")
-www_group=site_config.get("www_group","www")
+www_user=site_config.get("www_user","www-data")
+www_group=site_config.get("www_group","www-data")
 userprefix=site_config.get("userprefix","www-")
 logs=site_config.get("logs","/var/log/www-")
 phpsess=site_config.get("phpsess","/var/php/sessions-")
@@ -75,33 +76,39 @@ for srv_folder in srv_folders:
         bind_port = names_conf[site_name].get("port")
         with_custom = names_conf[site_name].get("custom", False) # causes fail if file is lost, as it may have security restriction
 
-        site_user=userprefix+serv
-        print("create user %s"%site_user)
-        os.system("pw useradd %s -m -g %s"%(site_user, www_group))
-        os.system("useradd %s -m -g %s"%(site_user, www_group))
         # DO NOT change permissions automatically!!! They can be configured differently for automation scripts or smthg
 #        os.system("chown -R %s:%s %s/htdocs"%(site_user,www_group,f))
 #        os.system("chmod -R 640 %s/htdocs"%f)
 #        os.system("chmod -R ug+X %s/htdocs"%f)
 
         if with_fpm:
+          # create user for php with the own group
+          # add www_group to this group
+          # use same user for all sites in serv
+          site_user=userprefix+serv
+          print("create user %s"%site_user)
+#          os.system("pw useradd %s -m -g %s"%(site_user, www_group))
+          os.system("useradd -m %s"%site_user)
+          os.system("adduser %s %s"%(www_user, site_user))
+
           poolconf = read_custom(site_name, os.path.join(f, "pool.conf-%s"))
           # create dir for session files
           site_phpsess=phpsess+serv
           if not os.path.exists(site_phpsess):
             os.makedirs(site_phpsess)
-          os.system("chown %s %s"%(serv, site_phpsess))
+          os.system("chown %s %s"%(site_user, site_phpsess))
 
           # create dir for logs
           os.system("mkdir -p %s/php"%logs)
-          os.system("chgrp -R %s %s/php"%(www_group, logs))
-          os.system("chmod g+w %s/php"%logs)
+          #os.system("mkdir -p %s/php.%s"%(logs, serv))
+          #os.system("chown -R %s %s/php.%s"%(site_user, logs, serv))
+          #os.system("chmod g+w %s/php"%logs)
 
           fpm_config=fpm_pools[with_fpm]
 
           print("write", "%s/%s.%s.conf"%(fpm_config, serv, site_name))
           with open("%s/%s.%s.conf"%(fpm_config, serv, site_name), "w") as cf:
-            cf.write(fpm_tpl%{"serv": serv, "user": site_user, "group": www_group, "site":site_name, "logs":logs, "phpsess":phpsess}+"\n"+poolconf)
+            cf.write(fpm_tpl%{"serv": serv, "user": site_user, "group": site_user, "site":site_name, "logs":logs, "phpsess":phpsess}+"\n"+poolconf)
 
         with open(os.path.join(f, "issue-%s.%s"%(serv, site_name)), "w") as of:
 #          f.write("~/.acme.sh/acme.sh --issue --log --debug" + ''.join([" -d %s"%x for x in names_conf[site_name]]) +" -w /var/www/html")

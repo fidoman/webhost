@@ -1,7 +1,11 @@
-apt install python3-mako apache2 php-fpm default-mysql-server
+apt install python3-mako apache2 php-fpm 
+#default-mysql-server
 apt install php-fpm apache2-dev pkg-config php-mbstring php-xml php-intl php-pgsql
 # bitrix
 apt install php-gd
+
+# dovecot auth
+# apache2-dev pkg-config
 
 # wiki
 apt install php-fpm php-json php-xml php-mbstring php-mysqlnd php-gd php-apcu
