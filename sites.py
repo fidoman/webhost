@@ -106,6 +106,11 @@ for srv_folder in srv_folders:
               os.system("pw group mod %s -m %s"%(site_user, www_user))
             else:
               print(osname,"create manually",site_user)
+              continue
+
+          site_gid=pwd.getpwnam(site_user).pw_gid
+          site_group=grp.getgrgid(site_gid).gr_name
+          print("use group", site_group)
 
           poolconf = read_custom(site_name, os.path.join(f, "pool.conf-%s"))
           # create dir for session files
@@ -135,7 +140,7 @@ for srv_folder in srv_folders:
 
           print("write", fpmconfig)
           with open(fpmconfig, "w") as cf:
-            cf.write(fpm_tpl%{"user": site_user, "group": site_user, "www_user": www_user, "www_group": www_group, "pool": fpmpool, "socket": fpmsocket, "logs":logs, "phpsess":phpsess}+"\n"+poolconf)
+            cf.write(fpm_tpl%{"user": site_user, "group": site_group, "www_user": www_user, "www_group": www_group, "pool": fpmpool, "socket": fpmsocket, "logs":logs, "phpsess":phpsess}+"\n"+poolconf)
 
         with open(os.path.join(f, "issue-%s.%s"%(serv, site_name)), "w") as of:
 #          f.write("~/.acme.sh/acme.sh --issue --log --debug" + ''.join([" -d %s"%x for x in names_conf[site_name]]) +" -w /var/www/html")
