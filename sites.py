@@ -113,11 +113,6 @@ for srv_folder in srv_folders:
           print("use group", site_group)
 
           poolconf = read_custom(site_name, os.path.join(f, "pool.conf-%s"))
-          # create dir for session files
-          site_phpsess=phpsess+serv
-          if not os.path.exists(site_phpsess):
-            os.makedirs(site_phpsess)
-          os.system("chown %s %s"%(site_user, site_phpsess))
 
           # create dir for logs
           os.system("mkdir -p %s/php"%logs)
@@ -137,6 +132,12 @@ for srv_folder in srv_folders:
             fpmpool=serv
             fpmsocket="/var/run/php-fpm-%s-%s.sock"%(with_fpm, fpmpool)
             fpmconfig="%s/%s.conf"%(fpm_config, serv)
+
+          # create dir for session files
+          site_phpsess=phpsess+fpmpool
+          if not os.path.exists(site_phpsess):
+            os.makedirs(site_phpsess)
+          os.system("chown %s %s"%(site_user, site_phpsess))
 
           print("write", fpmconfig)
           with open(fpmconfig, "w") as cf:
