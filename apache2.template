@@ -23,13 +23,13 @@
 
 ${custom}
 
-    ErrorLog ${logs}${site}-error.log
+    ErrorLog ${logs}/apache2/${site}-error.log
 
     # Possible values include: debug, info, notice, warn, error, crit,
     # alert, emerg.
     LogLevel warn
 
-    CustomLog ${logs}${site}-access.log combined
+    CustomLog ${logs}/apache2/${site}-access.log combined
 
 %if with_ssl:
     SSLEngine on

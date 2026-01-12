@@ -82,18 +82,23 @@ for srv_folder in srv_folders:
         os.system("chown -R %s:%s %s/htdocs"%(site_user,www_group,f))
         os.system("chmod -R 640 %s/htdocs"%f)
         os.system("chmod -R ug+X %s/htdocs"%f)
-#        os.system("mkdir -p !!!/var/log/www-%s/php"%s)
-#        os.system("chown -R %s !!!/var/log/www-%s"%(s,s))
 
         if with_fpm:
           poolconf = read_custom(site_name, os.path.join(f, "pool.conf-%s"))
+          # create dir for session files
           site_phpsess=phpsess+serv
           if not os.path.exists(site_phpsess):
             os.makedirs(site_phpsess)
           os.system("chown %s %s"%(serv, site_phpsess))
+
+          # create dir for logs
+          os.system("mkdir -p %s/php"%logs)
+          os.system("chgrp -R %s %s/php"%(www_group, logs))
+          os.system("chmod g+w %s/php"%logs)
+
           print("write", "%s/%s.%s.conf"%(fpm_pools, serv, site_name))
           with open("%s/%s.%s.conf"%(fpm_pools, serv, site_name), "w") as cf:
-            cf.write(fpm_tpl%{"serv": serv, "user": site_user, "site":site_name, "logs":logs, "phpsess":phpsess}+"\n"+poolconf)
+            cf.write(fpm_tpl%{"serv": serv, "user": site_user, "group": www_group, "site":site_name, "logs":logs, "phpsess":phpsess}+"\n"+poolconf)
 
         with open(os.path.join(f, "issue-%s.%s"%(serv, site_name)), "w") as of:
 #          f.write("~/.acme.sh/acme.sh --issue --log --debug" + ''.join([" -d %s"%x for x in names_conf[site_name]]) +" -w /var/www/html")

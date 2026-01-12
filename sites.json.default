@@ -9,7 +9,7 @@
       },
       "www_group": "www-data",
       "userprefix": "www-",
-      "logs": "/var/log/www-",
+      "logs": "/var/log",
       "phpsess": "/var/php/sessions-",
       "email": ...
     }
