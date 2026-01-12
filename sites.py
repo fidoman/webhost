@@ -121,7 +121,7 @@ for srv_folder in srv_folders:
 
           print("write", "%s/%s.%s.conf"%(fpm_config, serv, site_name))
           with open("%s/%s.%s.conf"%(fpm_config, serv, site_name), "w") as cf:
-            cf.write(fpm_tpl%{"serv": serv, "user": site_user, "group": site_user, "site":site_name, "logs":logs, "phpsess":phpsess}+"\n"+poolconf)
+            cf.write(fpm_tpl%{"serv": serv, "user": site_user, "group": site_user, "www_user": www_user, "www_group": www_group, "site":site_name, "logs":logs, "phpsess":phpsess}+"\n"+poolconf)
 
         with open(os.path.join(f, "issue-%s.%s"%(serv, site_name)), "w") as of:
 #          f.write("~/.acme.sh/acme.sh --issue --log --debug" + ''.join([" -d %s"%x for x in names_conf[site_name]]) +" -w /var/www/html")
