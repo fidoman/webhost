@@ -79,9 +79,10 @@ for srv_folder in srv_folders:
         print("create user %s"%site_user)
         os.system("pw useradd %s -m -g %s"%(site_user, www_group))
         os.system("useradd %s -m -g %s"%(site_user, www_group))
-        os.system("chown -R %s:%s %s/htdocs"%(site_user,www_group,f))
-        os.system("chmod -R 640 %s/htdocs"%f)
-        os.system("chmod -R ug+X %s/htdocs"%f)
+        # DO NOT change permissions automatically!!! They can be configured differently for automation scripts or smthg
+#        os.system("chown -R %s:%s %s/htdocs"%(site_user,www_group,f))
+#        os.system("chmod -R 640 %s/htdocs"%f)
+#        os.system("chmod -R ug+X %s/htdocs"%f)
 
         if with_fpm:
           poolconf = read_custom(site_name, os.path.join(f, "pool.conf-%s"))
