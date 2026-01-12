@@ -84,6 +84,9 @@ for srv_folder in srv_folders:
 #        os.system("chmod -R 640 %s/htdocs"%f)
 #        os.system("chmod -R ug+X %s/htdocs"%f)
 
+        # must be defined as it is passed to apache cfg tpl
+        fpmsocket = None
+
         if with_fpm:
           # create user for php with the own group
           # add www_group to this group
@@ -119,9 +122,20 @@ for srv_folder in srv_folders:
 
           fpm_config=fpm_pools[with_fpm]
 
-          print("write", "%s/%s.%s.conf"%(fpm_config, serv, site_name))
-          with open("%s/%s.%s.conf"%(fpm_config, serv, site_name), "w") as cf:
-            cf.write(fpm_tpl%{"serv": serv, "user": site_user, "group": site_user, "www_user": www_user, "www_group": www_group, "site":site_name, "logs":logs, "phpsess":phpsess}+"\n"+poolconf)
+          # TODO make serv wide poolconf and per-site poolconf and use custom only for pools with per-site config
+          if poolconf:
+            # use custom socket
+            fpmpool="%s.%s"%(serv, site_name)
+            fpmsocket="/var/run/php-fpm-%s-%s.sock"%(with_fpm, fpmpool)
+            fpmconfig="%s/%s.%s.conf"%(fpm_config, serv, site_name)
+          else:
+            fpmpool=serv
+            fpmsocket="/var/run/php-fpm-%s-%s.sock"%(with_fpm, fpmpool)
+            fpmconfig="%s/%s.conf"%(fpm_config, serv)
+
+          print("write", fpmconfig)
+          with open(fpmconfig, "w") as cf:
+            cf.write(fpm_tpl%{"user": site_user, "group": site_user, "www_user": www_user, "www_group": www_group, "pool": fpmpool, "socket": fpmsocket, "logs":logs, "phpsess":phpsess}+"\n"+poolconf)
 
         with open(os.path.join(f, "issue-%s.%s"%(serv, site_name)), "w") as of:
 #          f.write("~/.acme.sh/acme.sh --issue --log --debug" + ''.join([" -d %s"%x for x in names_conf[site_name]]) +" -w /var/www/html")
@@ -142,4 +156,4 @@ for srv_folder in srv_folders:
         print("write", os.path.join(apache_conf, "%s.%s.conf"%(serv, site_name)))
         with open(os.path.join(apache_conf, "%s.%s.conf"%(serv, site_name)), "w") as of:
           print("mako site %s.%s names %s"%(repr(serv), repr(site_name), repr(names)))
-          of.write(apache_tpl.render(serv_path=f, logs=logs, serv=serv, site=site_name, names=names, custom=custom, with_fpm=with_fpm, with_ssl=with_ssl, ip=bind_ip, port=bind_port, email=email, le_prefix=le_prefix))
+          of.write(apache_tpl.render(serv_path=f, logs=logs, serv=serv, site=site_name, names=names, custom=custom, fpmsocket=fpmsocket, with_ssl=with_ssl, ip=bind_ip, port=bind_port, email=email, le_prefix=le_prefix))

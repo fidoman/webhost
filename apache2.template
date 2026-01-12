@@ -38,7 +38,7 @@ ${custom}
     SSLCertificateKeyFile ${le_prefix}/etc/letsencrypt/live/${names[0]}/privkey.pem
 %endif
 
-%if with_fpm:
+%if fpmsocket:
 
     DirectoryIndex index.html index.htm index.php index.xhtml
 
@@ -51,7 +51,7 @@ ${custom}
     </IfModule>
 
     <FilesMatch ".+\.ph(ar|p|tml)$">
-        SetHandler "proxy:unix:/var/run/php-fpm.${site}.sock|fcgi://localhost"
+        SetHandler "proxy:unix:${fpmsocket}|fcgi://localhost"
     </FilesMatch>
     <FilesMatch ".+\.phps$">
         # Deny access to raw php sources by default
